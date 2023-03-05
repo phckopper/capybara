@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <title>Robot remote</title>
+    </head>
+    <body>
+        <h1>Remote control</h1>
+        <div id="output"></div>
+        <script>
+            console.log("Started!");
+            var s = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/control");
+            const pollGamepads = () => {
+                let gamepads = navigator.getGamepads();
+                //console.log(gamepads);
+                if(!gamepads[0]) {
+                    window.requestAnimationFrame(pollGamepads);
+                } else {
+                    const vertical = gamepads[0].axes[1] * -1;
+                    const horizontal = gamepads[0].axes[2];
+                    
+                    document.getElementById("output").innerText = `Vertical ${vertical.toFixed(2)} Horizontal: ${horizontal.toFixed(2)}`;
+
+                    if(s) s.send(JSON.stringify({ throttle: vertical, direction: horizontal }));
+                    window.requestAnimationFrame(pollGamepads);
+                }
+            }
+            pollGamepads();
+
+        </script>
+    </body>
+</html>
