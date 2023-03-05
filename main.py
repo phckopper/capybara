@@ -34,7 +34,7 @@ async def http_handler(path, headers):
     else:
         return None
 
-async def handler(websocket):
+async def handler(websocket, path):
     while True:
         message = await websocket.recv()
         packet = json.loads(message)
